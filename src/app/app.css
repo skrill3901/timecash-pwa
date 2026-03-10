@@ -1,0 +1,10 @@
+.tabs {
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+
+.tabs_btn {
+  width: 150px;
+}
