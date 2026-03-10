@@ -1,10 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { registerSW } from 'virtual:pwa-register';
 
 import '@picocss/pico';
 
 import { routeTree } from './routeTree.gen';
+
+registerSW({ immediate: true });
 
 const router = createRouter({ routeTree });
 
