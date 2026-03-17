@@ -1,4 +1,4 @@
-import { Form } from '@/widgets/form';
+import { WelcomePage } from '@pages/welcome';
 
 import { createFileRoute } from '@tanstack/react-router';
 
@@ -7,5 +7,5 @@ export const Route = createFileRoute('/')({
 });
 
 function Index() {
-  return <Form />;
+  return <WelcomePage />;
 }

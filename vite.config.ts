@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-import tsconfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,20 +13,24 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     react(),
+    tailwindcss(),
     tsconfigPaths(),
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: { enabled: true },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+      },
       manifest: {
-        name: 'Anka App',
-        short_name: 'Anka',
-        description: 'Anka application',
-        theme_color: '#42b883',
+        name: 'TimeCash',
+        short_name: 'TimeCash',
+        description: 'Оффлайн-учет занятий, часов и дохода',
+        theme_color: '#0f172a',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
         start_url: '/',
-        lang: 'en',
+        lang: 'ru',
         icons: [
           {
             src: '/pwa-192x192.png',

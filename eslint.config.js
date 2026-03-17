@@ -140,6 +140,12 @@ export default defineConfig([
     },
   },
   {
+    files: ['src/app/providers/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     files: ['vite.config.ts'],
     languageOptions: {
       parserOptions: {
