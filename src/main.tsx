@@ -1,9 +1,10 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { registerSW } from 'virtual:pwa-register';
+import './index.css';
 
-import '@picocss/pico';
+import { StrictMode } from 'react';
+
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRoot } from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 
 import { routeTree } from './routeTree.gen';
 

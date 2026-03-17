@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Form } from '@/widgets/form';
 
-import { Form } from 'widgets/form';
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   component: Index,
