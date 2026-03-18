@@ -17,6 +17,7 @@ export const isLessonRowComplete = (row: {
   }
 
   const duration = calculateDurationHours(row.startTime, row.endTime);
+
   if (duration === null) {
     return false;
   }
@@ -48,12 +49,14 @@ export const calculateStatistics = ({
   return rows.reduce<StatisticsResult>(
     (accumulator, row) => {
       const duration = calculateDurationHours(row.startTime, row.endTime);
+
       if (duration === null) {
         return accumulator;
       }
 
       const hasStudentA = Boolean(row.studentAId);
       const hasStudentB = Boolean(row.studentBId);
+
       if (!hasStudentA && !hasStudentB) {
         return accumulator;
       }

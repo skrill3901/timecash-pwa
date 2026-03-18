@@ -4,6 +4,7 @@ import {
   addDays,
   calculateDurationHours,
   formatRuDate,
+  formatRuDuration,
   normalizeRuDateInput,
   parseRuDateInput,
   parseTimeToMinutes,
@@ -36,5 +37,10 @@ describe('date-time helpers', () => {
   it('parses ru date input to iso', () => {
     expect(parseRuDateInput('18.03.2026')).toBe('2026-03-18');
     expect(parseRuDateInput('31.02.2026')).toBeNull();
+  });
+
+  it('formats duration in russian hours/minutes format', () => {
+    expect(formatRuDuration(2.55)).toBe('2ч. 33 мин.');
+    expect(formatRuDuration(0.5)).toBe('30 мин.');
   });
 });

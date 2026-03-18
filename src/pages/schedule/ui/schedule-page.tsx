@@ -1,7 +1,7 @@
 import { useStudents } from '@entities/student';
 
 import { formatRuDate } from '@shared/lib/date-time';
-import { Button } from '@shared/ui';
+import { Button, DatePickerInput } from '@shared/ui';
 
 import { useSchedulePage } from '../model/use-schedule-page';
 import { ScheduleRow } from './schedule-row';
@@ -9,9 +9,6 @@ import { ScheduleRow } from './schedule-row';
 export const SchedulePage = () => {
   const students = useStudents() ?? [];
   const {
-    dateInput,
-    handleDateInputBlur,
-    handleDateInputChange,
     handleAddRow,
     handleSave,
     handleTimeBlur,
@@ -21,6 +18,7 @@ export const SchedulePage = () => {
     rows,
     saveStatus,
     selectedDate,
+    setSelectedDate,
     updateRow,
   } = useSchedulePage();
 
@@ -34,21 +32,7 @@ export const SchedulePage = () => {
         <p className="mt-1 text-xs text-muted-foreground">
           Текущая дата: {formatRuDate(selectedDate)}
         </p>
-        <label className="mt-3 block text-sm">
-          День
-          <input
-            type="text"
-            lang="ru-RU"
-            inputMode="numeric"
-            placeholder="дд.мм.гггг"
-            maxLength={10}
-            pattern="^\d{2}\.\d{2}\.\d{4}$"
-            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-            value={dateInput}
-            onChange={(event) => handleDateInputChange(event.target.value)}
-            onBlur={handleDateInputBlur}
-          />
-        </label>
+        <DatePickerInput label="День" value={selectedDate} onChange={setSelectedDate} />
         <div className="mt-3 flex items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
             {saveStatus ||

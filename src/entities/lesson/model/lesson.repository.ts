@@ -2,6 +2,7 @@ import { enqueueSyncOperation } from '@entities/sync/model/sync.repository';
 
 import { db, type LessonRecord } from '@shared/config/db';
 import { addDays } from '@shared/lib/date-time';
+import { createId } from '@shared/lib/id';
 
 import { isLessonRowComplete } from './lesson.utils';
 
@@ -17,11 +18,13 @@ const sanitizeRow = (row: Omit<LessonRecord, 'date' | 'createdAt' | 'updatedAt'>
 
 export const getLessonsByDate = async (date: string): Promise<LessonRecord[]> => {
   const rows = await db.lessons.where('date').equals(date).sortBy('startTime');
+
   return rows;
 };
 
 const cloneRowsForDate = async (fromDate: string, toDate: string): Promise<LessonRecord[]> => {
   const sourceRows = await getLessonsByDate(fromDate);
+
   if (sourceRows.length === 0) {
     return [];
   }
@@ -29,7 +32,7 @@ const cloneRowsForDate = async (fromDate: string, toDate: string): Promise<Lesso
   const createdAt = nowIso();
   const clonedRows = sourceRows.map((row) => ({
     ...row,
-    id: crypto.randomUUID(),
+    id: createId(),
     date: toDate,
     createdAt,
     updatedAt: createdAt,
@@ -53,11 +56,13 @@ const cloneRowsForDate = async (fromDate: string, toDate: string): Promise<Lesso
 
 export const ensureLessonsByDate = async (date: string): Promise<LessonRecord[]> => {
   const existingRows = await getLessonsByDate(date);
+
   if (existingRows.length > 0) {
     return existingRows;
   }
 
   const previousWeekDate = addDays(date, -7);
+
   return cloneRowsForDate(previousWeekDate, date);
 };
 
@@ -95,6 +100,7 @@ export const saveLessonsByDate = async (
 
   await db.transaction('rw', db.lessons, async () => {
     await db.lessons.where('date').equals(date).delete();
+
     if (nextRows.length > 0) {
       await db.lessons.bulkPut(nextRows);
     }

@@ -7,11 +7,13 @@ import {
 
 const syncWithServer = async (): Promise<void> => {
   const pendingItems = await getPendingSyncOperations();
+
   if (pendingItems.length === 0) {
     return;
   }
 
   const isOnline = navigator.onLine;
+
   if (!isOnline) {
     return;
   }

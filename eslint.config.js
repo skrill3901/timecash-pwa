@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import pluginRouter from '@tanstack/eslint-plugin-router'
+import stylistic from '@stylistic/eslint-plugin'
 import prettier from 'eslint-config-prettier'
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended'
 import unicorn from 'eslint-plugin-unicorn'
@@ -57,6 +58,7 @@ export default defineConfig([
     ],
     plugins: {
       unicorn,
+      '@stylistic': stylistic,
       import: importPlugin,
       'simple-import-sort': simpleImportSort,
     },
@@ -125,6 +127,20 @@ export default defineConfig([
         { groups: fsdImportSortGroups },
       ],
       'simple-import-sort/exports': 'error',
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'directive', next: '*' },
+        { blankLine: 'any', prev: 'directive', next: 'directive' },
+        { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
+        {
+          blankLine: 'any',
+          prev: ['const', 'let', 'var'],
+          next: ['const', 'let', 'var'],
+        },
+        { blankLine: 'always', prev: '*', next: ['if', 'for', 'while', 'switch', 'try'] },
+        { blankLine: 'always', prev: ['if', 'for', 'while', 'switch', 'try'], next: '*' },
+        { blankLine: 'always', prev: '*', next: 'return' },
+      ],
     },
   },
   {

@@ -22,6 +22,7 @@ export const FALLBACK_SETTINGS: SettingsRecord = {
 
 export const ensureSettingsInitialized = async (): Promise<void> => {
   const existingSettings = await db.settings.get('default');
+
   if (existingSettings) {
     return;
   }
@@ -31,6 +32,7 @@ export const ensureSettingsInitialized = async (): Promise<void> => {
 
 export const getSettings = async (): Promise<SettingsRecord> => {
   const settings = await db.settings.get('default');
+
   return settings ?? FALLBACK_SETTINGS;
 };
 

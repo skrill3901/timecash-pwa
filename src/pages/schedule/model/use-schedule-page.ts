@@ -2,16 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { type EditableLessonRow, ensureLessonsByDate, saveLessonsByDate } from '@entities/lesson';
 
-import {
-  formatDateInputValue,
-  formatRuDate,
-  normalizeRuDateInput,
-  parseRuDateInput,
-  parseTimeToMinutes,
-} from '@shared/lib/date-time';
+import { formatDateInputValue, parseTimeToMinutes } from '@shared/lib/date-time';
+import { createId } from '@shared/lib/id';
 
 const createEmptyRow = (): EditableLessonRow => ({
-  id: crypto.randomUUID(),
+  id: createId(),
   startTime: '',
   endTime: '',
   studentAId: null,
@@ -28,7 +23,6 @@ const normalizeRows = (rows: EditableLessonRow[]): EditableLessonRow[] => {
 
 export const useSchedulePage = () => {
   const [selectedDate, setSelectedDate] = useState(formatDateInputValue(new Date()));
-  const [dateInput, setDateInput] = useState(formatRuDate(formatDateInputValue(new Date())));
   const [rows, setRows] = useState<EditableLessonRow[]>([createEmptyRow()]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -69,10 +63,6 @@ export const useSchedulePage = () => {
     };
   }, [selectedDate]);
 
-  useEffect(() => {
-    setDateInput(formatRuDate(selectedDate));
-  }, [selectedDate]);
-
   const updateRow = (id: string, payload: Partial<EditableLessonRow>) => {
     const nextRows = rows.map((row) => (row.id === id ? { ...row, ...payload } : row));
 
@@ -101,37 +91,11 @@ export const useSchedulePage = () => {
     await saveLessonsByDate(selectedDate, rows);
     setLastSavedRows(JSON.stringify(rows));
     setSaveStatus('Сохранено');
+
     setIsSaving(false);
   };
 
-  const handleDateInputChange = (value: string) => {
-    const normalized = normalizeRuDateInput(value);
-
-    setDateInput(normalized);
-
-    const parsed = parseRuDateInput(normalized);
-
-    if (parsed) {
-      setSelectedDate(parsed);
-    }
-  };
-
-  const handleDateInputBlur = () => {
-    const parsed = parseRuDateInput(dateInput);
-
-    if (!parsed) {
-      setDateInput(formatRuDate(selectedDate));
-
-      return;
-    }
-
-    setDateInput(formatRuDate(parsed));
-  };
-
   return {
-    dateInput,
-    handleDateInputBlur,
-    handleDateInputChange,
     handleAddRow,
     handleSave,
     handleTimeBlur,

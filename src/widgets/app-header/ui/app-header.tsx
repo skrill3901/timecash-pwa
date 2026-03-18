@@ -9,6 +9,7 @@ import { useRouterState } from '@tanstack/react-router';
 
 const titlesByPath = APP_NAV_ITEMS.reduce<Record<string, string>>((accumulator, item) => {
   accumulator[item.to] = item.label;
+
   return accumulator;
 }, {});
 

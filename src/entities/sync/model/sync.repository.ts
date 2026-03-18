@@ -1,4 +1,5 @@
 import { db, type SyncQueueRecord } from '@shared/config/db';
+import { createId } from '@shared/lib/id';
 
 const nowIso = (): string => new Date().toISOString();
 
@@ -8,7 +9,7 @@ export const enqueueSyncOperation = async (
   const createdAt = nowIso();
 
   await db.syncQueue.add({
-    id: crypto.randomUUID(),
+    id: createId(),
     status: 'pending',
     createdAt,
     updatedAt: createdAt,

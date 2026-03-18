@@ -82,6 +82,18 @@ export const calculateDurationHours = (startTime: string, endTime: string): numb
   return (endMinutes - startMinutes) / 60;
 };
 
+export const formatRuDuration = (hoursValue: number): string => {
+  const totalMinutes = Math.round(hoursValue * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) {
+    return `${minutes} мин.`;
+  }
+
+  return `${hours}ч. ${minutes} мин.`;
+};
+
 export const addDays = (dateValue: string, amount: number): string => {
   const date = new Date(`${dateValue}T00:00:00`);
 

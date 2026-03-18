@@ -1,6 +1,7 @@
 import { enqueueSyncOperation } from '@entities/sync/model/sync.repository';
 
 import { db, type StudentRecord } from '@shared/config/db';
+import { createId } from '@shared/lib/id';
 
 const nowIso = (): string => new Date().toISOString();
 
@@ -11,6 +12,7 @@ export const getActiveStudents = async (): Promise<StudentRecord[]> => {
 
       return !student.isArchived && fullName.length > 0;
     })
+
     .sortBy('fullName');
 
   return students;
@@ -25,7 +27,7 @@ export const getAllStudents = async (): Promise<StudentRecord[]> => {
 export const createStudent = async (fullName: string): Promise<StudentRecord> => {
   const createdAt = nowIso();
   const student: StudentRecord = {
-    id: crypto.randomUUID(),
+    id: createId(),
     fullName: fullName.trim(),
     isArchived: false,
     createdAt,

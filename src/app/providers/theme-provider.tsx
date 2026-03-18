@@ -14,6 +14,7 @@ const applyTheme = (themeMode: ThemeMode) => {
   const rootElement = document.documentElement;
   const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const resolvedTheme = themeMode === 'system' ? (isSystemDark ? 'dark' : 'light') : themeMode;
+
   rootElement.classList.toggle('dark', resolvedTheme === 'dark');
 };
 
@@ -34,6 +35,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const listener = () => applyTheme('system');
+
     media.addEventListener('change', listener);
 
     return () => media.removeEventListener('change', listener);
@@ -64,6 +66,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
 export const useTheme = (): ThemeContextValue => {
   const context = useContext(ThemeContext);
+
   if (!context) {
     throw new Error('useTheme must be used within ThemeProvider');
   }

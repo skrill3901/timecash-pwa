@@ -1,4 +1,4 @@
-import { Button } from '@shared/ui';
+import { Button, DatePickerInput } from '@shared/ui';
 
 import { useStatisticsPage } from '../model/use-statistics-page';
 import { StatisticsSummaryCards } from './statistics-summary-cards';
@@ -6,18 +6,16 @@ import { StudentsHoursTable } from './students-hours-table';
 
 export const StatisticsPage = () => {
   const {
-    endDateInput,
+    endDate,
     formattedRangeLabel,
-    handleEndDateInputBlur,
-    handleEndDateInputChange,
     handleShow,
-    handleStartDateInputBlur,
-    handleStartDateInputChange,
     isLoading,
     isRangeValid,
     rows,
+    setEndDate,
+    setStartDate,
     settings,
-    startDateInput,
+    startDate,
     studentsStats,
     summary,
   } = useStatisticsPage();
@@ -32,36 +30,8 @@ export const StatisticsPage = () => {
         <p className="mt-1 text-xs text-muted-foreground">Период: {formattedRangeLabel}</p>
 
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <label className="text-sm">
-            Дата начала
-            <input
-              type="text"
-              lang="ru-RU"
-              inputMode="numeric"
-              placeholder="дд.мм.гггг"
-              maxLength={10}
-              pattern="^\d{2}\.\d{2}\.\d{4}$"
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-              value={startDateInput}
-              onChange={(event) => handleStartDateInputChange(event.target.value)}
-              onBlur={handleStartDateInputBlur}
-            />
-          </label>
-          <label className="text-sm">
-            Дата конца
-            <input
-              type="text"
-              lang="ru-RU"
-              inputMode="numeric"
-              placeholder="дд.мм.гггг"
-              maxLength={10}
-              pattern="^\d{2}\.\d{2}\.\d{4}$"
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-              value={endDateInput}
-              onChange={(event) => handleEndDateInputChange(event.target.value)}
-              onBlur={handleEndDateInputBlur}
-            />
-          </label>
+          <DatePickerInput label="Дата начала" value={startDate} onChange={setStartDate} />
+          <DatePickerInput label="Дата конца" value={endDate} onChange={setEndDate} />
         </div>
 
         {!isRangeValid ? (

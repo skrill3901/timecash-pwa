@@ -4,12 +4,7 @@ import { calculateStatistics, getLessonsByDateRange, type LessonRow } from '@ent
 import { useSettings } from '@entities/settings';
 import { useAllStudents } from '@entities/student';
 
-import {
-  formatDateInputValue,
-  formatRuDate,
-  normalizeRuDateInput,
-  parseRuDateInput,
-} from '@shared/lib/date-time';
+import { formatDateInputValue, formatRuDate } from '@shared/lib/date-time';
 
 import { buildStudentStatistics } from './build-student-statistics';
 
@@ -22,10 +17,6 @@ export const useStatisticsPage = () => {
   const allStudents = useMemo(() => allStudentsQuery ?? [], [allStudentsQuery]);
   const [startDate, setStartDate] = useState(formatDateInputValue(monthStart));
   const [endDate, setEndDate] = useState(formatDateInputValue(currentDate));
-  const [startDateInput, setStartDateInput] = useState(
-    formatRuDate(formatDateInputValue(monthStart)),
-  );
-  const [endDateInput, setEndDateInput] = useState(formatRuDate(formatDateInputValue(currentDate)));
   const [isLoading, setIsLoading] = useState(false);
   const [rows, setRows] = useState<LessonRow[]>([]);
 
@@ -44,8 +35,14 @@ export const useStatisticsPage = () => {
   }, [rows, settings]);
 
   const studentsStats = useMemo(
-    () => buildStudentStatistics(rows, allStudents),
-    [allStudents, rows],
+    () =>
+      buildStudentStatistics(
+        rows,
+        allStudents,
+        settings?.hourlyRateSingle ?? 0,
+        settings?.hourlyRatePair ?? 0,
+      ),
+    [allStudents, rows, settings?.hourlyRatePair, settings?.hourlyRateSingle],
   );
 
   const handleShow = async () => {
@@ -60,63 +57,10 @@ export const useStatisticsPage = () => {
     setIsLoading(false);
   };
 
-  const handleStartDateInputChange = (value: string) => {
-    const normalized = normalizeRuDateInput(value);
-
-    setStartDateInput(normalized);
-
-    const parsed = parseRuDateInput(normalized);
-
-    if (parsed) {
-      setStartDate(parsed);
-    }
-  };
-
-  const handleEndDateInputChange = (value: string) => {
-    const normalized = normalizeRuDateInput(value);
-
-    setEndDateInput(normalized);
-
-    const parsed = parseRuDateInput(normalized);
-
-    if (parsed) {
-      setEndDate(parsed);
-    }
-  };
-
-  const handleStartDateInputBlur = () => {
-    const parsed = parseRuDateInput(startDateInput);
-
-    if (!parsed) {
-      setStartDateInput(formatRuDate(startDate));
-
-      return;
-    }
-
-    setStartDateInput(formatRuDate(parsed));
-  };
-
-  const handleEndDateInputBlur = () => {
-    const parsed = parseRuDateInput(endDateInput);
-
-    if (!parsed) {
-      setEndDateInput(formatRuDate(endDate));
-
-      return;
-    }
-
-    setEndDateInput(formatRuDate(parsed));
-  };
-
   return {
     endDate,
-    endDateInput,
     formattedRangeLabel: `${formatRuDate(startDate)} - ${formatRuDate(endDate)}`,
-    handleEndDateInputBlur,
-    handleEndDateInputChange,
     handleShow,
-    handleStartDateInputBlur,
-    handleStartDateInputChange,
     isLoading,
     isRangeValid,
     rows,
@@ -124,7 +68,6 @@ export const useStatisticsPage = () => {
     setStartDate,
     settings,
     startDate,
-    startDateInput,
     studentsStats,
     summary,
   };

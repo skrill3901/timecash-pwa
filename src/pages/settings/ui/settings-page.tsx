@@ -9,6 +9,7 @@ import { Button } from '@shared/ui';
 
 const normalizeRate = (value: string): number => {
   const parsed = Number(value);
+
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 };
 
@@ -40,6 +41,7 @@ export const SettingsPage = () => {
 
     if (hourlyRateSingle <= 0 || hourlyRatePair <= 0) {
       setStatus('Укажите корректные положительные ставки.');
+
       return;
     }
 

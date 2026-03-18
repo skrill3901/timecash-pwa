@@ -10,6 +10,7 @@ export const AppShell = () => {
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(navigator.onLine);
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOnline);
 
