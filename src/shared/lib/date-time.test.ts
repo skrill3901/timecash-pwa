@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'bun:test';
 
-import { addDays, calculateDurationHours, parseTimeToMinutes } from './date-time';
+import {
+  addDays,
+  calculateDurationHours,
+  formatRuDate,
+  normalizeRuDateInput,
+  parseRuDateInput,
+  parseTimeToMinutes,
+} from './date-time';
 
 describe('date-time helpers', () => {
   it('parses HH:mm values', () => {
@@ -15,5 +22,19 @@ describe('date-time helpers', () => {
 
   it('returns previous week day via addDays', () => {
     expect(addDays('2026-03-18', -7)).toBe('2026-03-11');
+  });
+
+  it('formats date to dd.mm.yyyy', () => {
+    expect(formatRuDate('2026-03-18')).toBe('18.03.2026');
+  });
+
+  it('normalizes ru date input', () => {
+    expect(normalizeRuDateInput('18032026')).toBe('18.03.2026');
+    expect(normalizeRuDateInput('18.0')).toBe('18.0');
+  });
+
+  it('parses ru date input to iso', () => {
+    expect(parseRuDateInput('18.03.2026')).toBe('2026-03-18');
+    expect(parseRuDateInput('31.02.2026')).toBeNull();
   });
 });

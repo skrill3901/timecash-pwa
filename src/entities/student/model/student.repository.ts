@@ -8,9 +8,17 @@ export const getActiveStudents = async (): Promise<StudentRecord[]> => {
   const students = await db.students
     .filter((student) => {
       const fullName = typeof student.fullName === 'string' ? student.fullName.trim() : '';
+
       return !student.isArchived && fullName.length > 0;
     })
     .sortBy('fullName');
+
+  return students;
+};
+
+export const getAllStudents = async (): Promise<StudentRecord[]> => {
+  const students = await db.students.toArray();
+
   return students;
 };
 

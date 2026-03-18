@@ -1,81 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { archiveStudent, createStudent, updateStudent, useStudents } from '@entities/student';
-
 import { Button } from '@shared/ui';
 
-type ModalState =
-  | { type: 'none' }
-  | { type: 'create' }
-  | { type: 'edit'; id: string; fullName: string }
-  | { type: 'delete'; id: string; fullName: string };
+import { useStudentsPage } from '../model/use-students-page';
+import { StudentsModal } from './students-modal';
 
 export const StudentsPage = () => {
-  const students = useStudents() ?? [];
-  const [modalState, setModalState] = useState<ModalState>({ type: 'none' });
-  const [fullName, setFullName] = useState('');
-  const fullNameInputRef = useRef<HTMLInputElement | null>(null);
-
+  const {
+    closeModal,
+    fullName,
+    fullNameInputRef,
+    handleCreate,
+    handleCreateOpen,
+    handleDelete,
+    handleDeleteOpen,
+    handleEdit,
+    handleEditOpen,
+    modalState,
+    selectedStudent,
+    setFullName,
+    students,
+  } = useStudentsPage();
   const hasStudents = students.length > 0;
-
-  const selectedStudent =
-    modalState.type === 'edit' || modalState.type === 'delete'
-      ? students.find((student) => student.id === modalState.id)
-      : undefined;
-
-  const closeModal = () => {
-    setModalState({ type: 'none' });
-    setFullName('');
-  };
-
-  const handleCreateOpen = () => {
-    setModalState({ type: 'create' });
-    setFullName('');
-  };
-
-  const handleCreate = async () => {
-    if (!fullName.trim()) {
-      return;
-    }
-
-    await createStudent(fullName);
-    closeModal();
-  };
-
-  const handleEditOpen = (id: string, value: string) => {
-    setModalState({ type: 'edit', id, fullName: value });
-    setFullName(value);
-  };
-
-  const handleEdit = async () => {
-    if (modalState.type !== 'edit' || !fullName.trim()) {
-      return;
-    }
-
-    await updateStudent(modalState.id, fullName);
-    closeModal();
-  };
-
-  const handleDeleteOpen = (id: string, value: string) => {
-    setModalState({ type: 'delete', id, fullName: value });
-  };
-
-  const handleDelete = async () => {
-    if (modalState.type !== 'delete') {
-      return;
-    }
-
-    await archiveStudent(modalState.id);
-    closeModal();
-  };
-
-  useEffect(() => {
-    if (modalState.type !== 'create' && modalState.type !== 'edit') {
-      return;
-    }
-
-    fullNameInputRef.current?.focus();
-  }, [modalState.type]);
 
   return (
     <section className="space-y-4">
@@ -138,57 +82,18 @@ export const StudentsPage = () => {
         </div>
       )}
 
-      {modalState.type !== 'none' ? (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-xl border border-border bg-background p-4 shadow-xl">
-            {modalState.type === 'delete' ? (
-              <>
-                <h3 className="text-lg font-semibold">Подтвердите удаление</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Ученик «{selectedStudent?.fullName ?? modalState.fullName}» будет архивирован.
-                </p>
-                <div className="mt-4 flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={closeModal}>
-                    Отмена
-                  </Button>
-                  <Button type="button" variant="destructive" onClick={() => void handleDelete()}>
-                    Удалить
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h3 className="text-lg font-semibold">
-                  {modalState.type === 'create' ? 'Добавить ученика' : 'Редактировать ученика'}
-                </h3>
-                <label className="mt-3 block text-sm">
-                  ФИО
-                  <input
-                    ref={fullNameInputRef}
-                    className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-                    placeholder="Введите ФИО"
-                    value={fullName}
-                    onChange={(event) => setFullName(event.target.value)}
-                  />
-                </label>
-                <div className="mt-4 flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={closeModal}>
-                    Отмена
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() =>
-                      void (modalState.type === 'create' ? handleCreate() : handleEdit())
-                    }
-                  >
-                    Сохранить
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      ) : null}
+      <StudentsModal
+        fullName={fullName}
+        inputRef={fullNameInputRef}
+        modalType={modalState.type}
+        selectedStudentName={selectedStudent?.fullName}
+        fallbackStudentName={modalState.type === 'delete' ? modalState.fullName : undefined}
+        onClose={closeModal}
+        onConfirmCreate={handleCreate}
+        onConfirmDelete={handleDelete}
+        onConfirmEdit={handleEdit}
+        onFullNameChange={setFullName}
+      />
     </section>
   );
 };

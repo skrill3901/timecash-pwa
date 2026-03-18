@@ -1,38 +1,26 @@
-import { useMemo, useState } from 'react';
-
-import { calculateStatistics, getLessonsByDateRange } from '@entities/lesson';
-import { useSettings } from '@entities/settings';
-
-import { formatDateInputValue } from '@shared/lib/date-time';
 import { Button } from '@shared/ui';
 
-const currentDate = new Date();
-const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+import { useStatisticsPage } from '../model/use-statistics-page';
+import { StatisticsSummaryCards } from './statistics-summary-cards';
+import { StudentsHoursTable } from './students-hours-table';
 
 export const StatisticsPage = () => {
-  const settings = useSettings();
-  const [startDate, setStartDate] = useState(formatDateInputValue(monthStart));
-  const [endDate, setEndDate] = useState(formatDateInputValue(currentDate));
-  const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState({ totalLessons: 0, totalHours: 0, totalAmount: 0 });
-
-  const isRangeValid = useMemo(() => startDate <= endDate, [endDate, startDate]);
-
-  const handleShow = async () => {
-    if (!isRangeValid || !settings) {
-      return;
-    }
-
-    setIsLoading(true);
-    const rows = await getLessonsByDateRange(startDate, endDate);
-    const nextStats = calculateStatistics({
-      rows,
-      hourlyRateSingle: settings.hourlyRateSingle,
-      hourlyRatePair: settings.hourlyRatePair,
-    });
-    setStats(nextStats);
-    setIsLoading(false);
-  };
+  const {
+    endDateInput,
+    formattedRangeLabel,
+    handleEndDateInputBlur,
+    handleEndDateInputChange,
+    handleShow,
+    handleStartDateInputBlur,
+    handleStartDateInputChange,
+    isLoading,
+    isRangeValid,
+    rows,
+    settings,
+    startDateInput,
+    studentsStats,
+    summary,
+  } = useStatisticsPage();
 
   return (
     <section className="space-y-4">
@@ -41,24 +29,37 @@ export const StatisticsPage = () => {
         <p className="mt-1 text-sm text-muted-foreground">
           Выберите период и нажмите «Показать», чтобы рассчитать часы и доход.
         </p>
+        <p className="mt-1 text-xs text-muted-foreground">Период: {formattedRangeLabel}</p>
 
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <label className="text-sm">
             Дата начала
             <input
-              type="date"
+              type="text"
+              lang="ru-RU"
+              inputMode="numeric"
+              placeholder="дд.мм.гггг"
+              maxLength={10}
+              pattern="^\d{2}\.\d{2}\.\d{4}$"
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-              value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
+              value={startDateInput}
+              onChange={(event) => handleStartDateInputChange(event.target.value)}
+              onBlur={handleStartDateInputBlur}
             />
           </label>
           <label className="text-sm">
             Дата конца
             <input
-              type="date"
+              type="text"
+              lang="ru-RU"
+              inputMode="numeric"
+              placeholder="дд.мм.гггг"
+              maxLength={10}
+              pattern="^\d{2}\.\d{2}\.\d{4}$"
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
-              value={endDate}
-              onChange={(event) => setEndDate(event.target.value)}
+              value={endDateInput}
+              onChange={(event) => handleEndDateInputChange(event.target.value)}
+              onBlur={handleEndDateInputBlur}
             />
           </label>
         </div>
@@ -80,22 +81,22 @@ export const StatisticsPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
-        <article className="rounded-lg border border-border bg-card p-4">
-          <p className="text-sm text-muted-foreground">Занятий</p>
-          <p className="mt-1 text-2xl font-semibold">{stats.totalLessons}</p>
-        </article>
-        <article className="rounded-lg border border-border bg-card p-4">
-          <p className="text-sm text-muted-foreground">Часы</p>
-          <p className="mt-1 text-2xl font-semibold">{stats.totalHours.toFixed(2)}</p>
-        </article>
-        <article className="rounded-lg border border-border bg-card p-4">
-          <p className="text-sm text-muted-foreground">Доход</p>
-          <p className="mt-1 text-2xl font-semibold">
-            {Math.round(stats.totalAmount).toLocaleString('ru-RU')} ₽
-          </p>
-        </article>
-      </div>
+      <StatisticsSummaryCards
+        totalLessons={summary.totalLessons}
+        totalHours={summary.totalHours}
+        totalAmount={summary.totalAmount}
+      />
+
+      <section className="space-y-2">
+        <h3 className="text-base font-semibold">Часы по ученикам</h3>
+        {rows.length > 0 ? (
+          <StudentsHoursTable rows={studentsStats} />
+        ) : (
+          <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Нажмите «Показать», чтобы загрузить данные за период.
+          </div>
+        )}
+      </section>
     </section>
   );
 };
