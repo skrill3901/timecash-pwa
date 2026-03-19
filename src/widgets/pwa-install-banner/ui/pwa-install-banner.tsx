@@ -14,6 +14,15 @@ const isIosDevice = (): boolean => {
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 };
 
+const isIosSafari = (): boolean => {
+  const userAgent = window.navigator.userAgent;
+  const isIos = /iphone|ipad|ipod/i.test(userAgent);
+  const isSafari = /safari/i.test(userAgent);
+  const isOtherIosBrowser = /crios|fxios|edgios|opios|yaapp_ios|yabrowser/i.test(userAgent);
+
+  return isIos && isSafari && !isOtherIosBrowser;
+};
+
 const isAndroidDevice = (): boolean => {
   return /android/i.test(window.navigator.userAgent);
 };
@@ -73,12 +82,19 @@ export const PwaInstallBanner = () => {
 
   const canInstall = Boolean(deferredPrompt);
   const isAndroid = useMemo(() => isAndroidDevice(), []);
-  const showIosHint = useMemo(() => isIosDevice() && !isInstalled, [isInstalled]);
+  const showIosSafariHint = useMemo(() => isIosSafari() && !isInstalled, [isInstalled]);
+  const showIosOpenSafariHint = useMemo(
+    () => isIosDevice() && !isIosSafari() && !isInstalled,
+    [isInstalled],
+  );
   const showAndroidHint = useMemo(
     () => isAndroid && !isInstalled && !canInstall,
     [canInstall, isAndroid, isInstalled],
   );
-  const shouldShow = !isInstalled && !isDismissed && (canInstall || showIosHint || showAndroidHint);
+  const shouldShow =
+    !isInstalled &&
+    !isDismissed &&
+    (canInstall || showIosSafariHint || showIosOpenSafariHint || showAndroidHint);
 
   const handleDismiss = () => {
     localStorage.setItem(DISMISS_STORAGE_KEY, String(Date.now()));
@@ -110,11 +126,13 @@ export const PwaInstallBanner = () => {
         <p className="text-xs text-foreground">
           {canInstall
             ? 'Установите приложение на главный экран для быстрого доступа и офлайн-работы.'
-            : showIosHint
-              ? 'Добавьте приложение на главный экран: Поделиться -> На экран «Домой».'
-              : isSecure
-                ? 'Добавьте приложение через меню браузера (⋮) -> Установить приложение.'
-                : 'В dev по http Android часто создает обычный ярлык с адресной строкой. Для полноэкранного режима откройте HTTPS или production-сборку и выберите «Установить приложение».'}
+            : showIosSafariHint
+              ? 'На iPhone установка только вручную: Safari -> Поделиться -> На экран «Домой».'
+              : showIosOpenSafariHint
+                ? 'Для установки на iPhone откройте сайт именно в Safari, затем: Поделиться -> На экран «Домой».'
+                : isSecure
+                  ? 'Добавьте приложение через меню браузера (⋮) -> Установить приложение.'
+                  : 'В dev по http Android часто создает обычный ярлык с адресной строкой. Для полноэкранного режима откройте HTTPS или production-сборку и выберите «Установить приложение».'}
         </p>
         <div className="flex items-center gap-2">
           {canInstall ? (

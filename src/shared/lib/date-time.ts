@@ -17,7 +17,7 @@ export const formatRuDate = (dateValue: string): string => {
 };
 
 export const normalizeRuDateInput = (value: string): string => {
-  const digits = value.replaceAll(/\D/g, '').slice(0, 8);
+  const digits = value.replace(/\D/g, '').slice(0, 8);
 
   if (digits.length <= 2) {
     return digits;
@@ -62,7 +62,7 @@ export const parseTimeToMinutes = (value: string): number | null => {
 };
 
 export const formatTimeInputValue = (value: string): string => {
-  const digits = value.replaceAll(/\D/g, '').slice(0, 4);
+  const digits = value.replace(/\D/g, '').slice(0, 4);
 
   if (digits.length <= 2) {
     return digits;
