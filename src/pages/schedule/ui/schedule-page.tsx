@@ -4,10 +4,12 @@ import { formatRuDate } from '@shared/lib/date-time';
 import { Button, DatePickerInput } from '@shared/ui';
 
 import { useSchedulePage } from '../model/use-schedule-page';
+import { SchedulePageSkeleton } from './schedule-page-skeleton';
 import { ScheduleRow } from './schedule-row';
 
 export const SchedulePage = () => {
-  const students = useStudents() ?? [];
+  const studentsQuery = useStudents();
+  const students = studentsQuery ?? [];
   const {
     handleAddRow,
     handleSave,
@@ -21,6 +23,10 @@ export const SchedulePage = () => {
     setSelectedDate,
     updateRow,
   } = useSchedulePage();
+
+  if (isLoading || studentsQuery === undefined) {
+    return <SchedulePageSkeleton />;
+  }
 
   return (
     <section className="space-y-4">
@@ -49,25 +55,19 @@ export const SchedulePage = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Загружаем расписание...
-        </div>
-      ) : (
-        <ul className="space-y-3">
-          {rows.map((row, index) => (
-            <ScheduleRow
-              key={row.id}
-              index={index}
-              row={row}
-              students={students}
-              onAddRow={handleAddRow}
-              onTimeBlur={handleTimeBlur}
-              onUpdateRow={updateRow}
-            />
-          ))}
-        </ul>
-      )}
+      <ul className="space-y-3">
+        {rows.map((row, index) => (
+          <ScheduleRow
+            key={row.id}
+            index={index}
+            row={row}
+            students={students}
+            onAddRow={handleAddRow}
+            onTimeBlur={handleTimeBlur}
+            onUpdateRow={updateRow}
+          />
+        ))}
+      </ul>
     </section>
   );
 };

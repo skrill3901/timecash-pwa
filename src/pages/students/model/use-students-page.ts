@@ -11,6 +11,7 @@ type ModalState =
 export const useStudentsPage = () => {
   const studentsQuery = useStudents();
   const students = useMemo(() => studentsQuery ?? [], [studentsQuery]);
+  const isLoading = studentsQuery === undefined;
   const [modalState, setModalState] = useState<ModalState>({ type: 'none' });
   const [fullName, setFullName] = useState('');
   const fullNameInputRef = useRef<HTMLInputElement | null>(null);
@@ -87,6 +88,7 @@ export const useStudentsPage = () => {
     handleDeleteOpen,
     handleEdit,
     handleEditOpen,
+    isLoading,
     modalState,
     selectedStudent,
     setFullName,

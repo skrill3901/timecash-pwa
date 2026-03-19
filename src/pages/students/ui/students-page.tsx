@@ -2,6 +2,7 @@ import { Button } from '@shared/ui';
 
 import { useStudentsPage } from '../model/use-students-page';
 import { StudentsModal } from './students-modal';
+import { StudentsPageSkeleton } from './students-page-skeleton';
 
 export const StudentsPage = () => {
   const {
@@ -14,12 +15,17 @@ export const StudentsPage = () => {
     handleDeleteOpen,
     handleEdit,
     handleEditOpen,
+    isLoading,
     modalState,
     selectedStudent,
     setFullName,
     students,
   } = useStudentsPage();
   const hasStudents = students.length > 0;
+
+  if (isLoading) {
+    return <StudentsPageSkeleton />;
+  }
 
   return (
     <section className="space-y-4">

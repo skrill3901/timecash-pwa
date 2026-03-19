@@ -67,6 +67,7 @@ export const useStatisticsPage = () => {
   const initialSession = readSessionSnapshot();
   const settings = useSettings();
   const allStudentsQuery = useAllStudents();
+  const isPageInitializing = settings === undefined || allStudentsQuery === undefined;
   const allStudents = useMemo(() => allStudentsQuery ?? [], [allStudentsQuery]);
   const [startDate, setStartDate] = useState(
     initialSession?.startDate ?? defaultDateRange.startDate,
@@ -124,6 +125,7 @@ export const useStatisticsPage = () => {
     formattedRangeLabel: `${formatRuDate(startDate)} - ${formatRuDate(endDate)}`,
     handleShow,
     isLoading,
+    isPageInitializing,
     isRangeValid,
     rows,
     setEndDate,

@@ -1,6 +1,7 @@
 import { Button, DatePickerInput } from '@shared/ui';
 
 import { useStatisticsPage } from '../model/use-statistics-page';
+import { StatisticsPageSkeleton } from './statistics-page-skeleton';
 import { StatisticsSummaryCards } from './statistics-summary-cards';
 import { StudentsHoursTable } from './students-hours-table';
 
@@ -10,6 +11,7 @@ export const StatisticsPage = () => {
     formattedRangeLabel,
     handleShow,
     isLoading,
+    isPageInitializing,
     isRangeValid,
     rows,
     setEndDate,
@@ -19,6 +21,10 @@ export const StatisticsPage = () => {
     studentsStats,
     summary,
   } = useStatisticsPage();
+
+  if (isPageInitializing) {
+    return <StatisticsPageSkeleton />;
+  }
 
   return (
     <section className="space-y-4">

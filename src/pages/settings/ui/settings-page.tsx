@@ -7,6 +7,8 @@ import { saveSettings, useSettings } from '@entities/settings';
 
 import { Button } from '@shared/ui';
 
+import { SettingsPageSkeleton } from './settings-page-skeleton';
+
 const normalizeRate = (value: string): number => {
   const parsed = Number(value);
 
@@ -66,6 +68,10 @@ export const SettingsPage = () => {
 
     setStatus('Параметры сохранены.');
   };
+
+  if (!settings) {
+    return <SettingsPageSkeleton />;
+  }
 
   return (
     <section className="rounded-xl border border-border bg-card p-4">

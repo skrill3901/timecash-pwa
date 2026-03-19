@@ -24,7 +24,7 @@ const normalizeRows = (rows: EditableLessonRow[]): EditableLessonRow[] => {
 export const useSchedulePage = () => {
   const [selectedDate, setSelectedDate] = useState(formatDateInputValue(new Date()));
   const [rows, setRows] = useState<EditableLessonRow[]>([createEmptyRow()]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedRows, setLastSavedRows] = useState('');
   const [saveStatus, setSaveStatus] = useState('');
