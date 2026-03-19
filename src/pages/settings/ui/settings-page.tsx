@@ -16,8 +16,10 @@ const normalizeRate = (value: string): number => {
 export const SettingsPage = () => {
   const settings = useSettings();
   const { themeMode } = useTheme();
-  const [singleRate, setSingleRate] = useState('1000');
-  const [pairRate, setPairRate] = useState('1600');
+  const [singleRate, setSingleRate] = useState('850');
+  const [pairRate, setPairRate] = useState('1000');
+  const [singleRent, setSingleRent] = useState('100');
+  const [pairRent, setPairRent] = useState('200');
   const [currentTheme, setCurrentTheme] = useState<ThemeMode>('system');
   const [status, setStatus] = useState('');
 
@@ -28,6 +30,8 @@ export const SettingsPage = () => {
 
     setSingleRate(String(settings.hourlyRateSingle));
     setPairRate(String(settings.hourlyRatePair));
+    setSingleRent(String(settings.rentalRateSingle));
+    setPairRent(String(settings.rentalRatePair));
     setCurrentTheme(settings.themeMode);
   }, [settings]);
 
@@ -38,8 +42,15 @@ export const SettingsPage = () => {
   const handleSave = async () => {
     const hourlyRateSingle = normalizeRate(singleRate);
     const hourlyRatePair = normalizeRate(pairRate);
+    const rentalRateSingle = normalizeRate(singleRent);
+    const rentalRatePair = normalizeRate(pairRent);
 
-    if (hourlyRateSingle <= 0 || hourlyRatePair <= 0) {
+    if (
+      hourlyRateSingle <= 0 ||
+      hourlyRatePair <= 0 ||
+      rentalRateSingle <= 0 ||
+      rentalRatePair <= 0
+    ) {
       setStatus('Укажите корректные положительные ставки.');
 
       return;
@@ -48,6 +59,8 @@ export const SettingsPage = () => {
     await saveSettings({
       hourlyRateSingle,
       hourlyRatePair,
+      rentalRateSingle,
+      rentalRatePair,
       themeMode: currentTheme,
     });
 
@@ -81,6 +94,28 @@ export const SettingsPage = () => {
             className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
             value={pairRate}
             onChange={(event) => setPairRate(event.target.value)}
+          />
+        </label>
+
+        <label className="text-sm">
+          Аренда за одного
+          <input
+            type="number"
+            min={1}
+            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
+            value={singleRent}
+            onChange={(event) => setSingleRent(event.target.value)}
+          />
+        </label>
+
+        <label className="text-sm">
+          Аренда за двоих
+          <input
+            type="number"
+            min={1}
+            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
+            value={pairRent}
+            onChange={(event) => setPairRent(event.target.value)}
           />
         </label>
 

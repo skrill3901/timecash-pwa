@@ -5,17 +5,31 @@ import { createId } from '@shared/lib/id';
 
 const nowIso = (): string => new Date().toISOString();
 
+const normalizeStudentName = (fullName: string): string => {
+  return fullName.trim().replaceAll(/\s+/g, ' ').toLocaleLowerCase('ru-RU');
+};
+
+const sanitizeStudentName = (fullName: string): string => {
+  return fullName.trim().replaceAll(/\s+/g, ' ');
+};
+
 export const getActiveStudents = async (): Promise<StudentRecord[]> => {
   const students = await db.students
-    .filter((student) => {
-      const fullName = typeof student.fullName === 'string' ? student.fullName.trim() : '';
-
-      return !student.isArchived && fullName.length > 0;
-    })
-
+    .filter((student) => !student.isArchived && sanitizeStudentName(student.fullName).length > 0)
     .sortBy('fullName');
+  const seenNames = new Set<string>();
 
-  return students;
+  return students.filter((student) => {
+    const normalizedName = normalizeStudentName(student.fullName);
+
+    if (seenNames.has(normalizedName)) {
+      return false;
+    }
+
+    seenNames.add(normalizedName);
+
+    return true;
+  });
 };
 
 export const getAllStudents = async (): Promise<StudentRecord[]> => {
@@ -25,10 +39,28 @@ export const getAllStudents = async (): Promise<StudentRecord[]> => {
 };
 
 export const createStudent = async (fullName: string): Promise<StudentRecord> => {
+  const sanitizedFullName = sanitizeStudentName(fullName);
+  const normalizedNewName = normalizeStudentName(sanitizedFullName);
+
+  if (!normalizedNewName) {
+    throw new Error('Имя ученика не может быть пустым');
+  }
+
+  const existingStudent = await db.students
+    .filter(
+      (student) =>
+        !student.isArchived && normalizeStudentName(student.fullName) === normalizedNewName,
+    )
+    .first();
+
+  if (existingStudent) {
+    return existingStudent;
+  }
+
   const createdAt = nowIso();
   const student: StudentRecord = {
     id: createId(),
-    fullName: fullName.trim(),
+    fullName: sanitizedFullName,
     isArchived: false,
     createdAt,
     updatedAt: createdAt,
@@ -46,8 +78,9 @@ export const createStudent = async (fullName: string): Promise<StudentRecord> =>
 };
 
 export const updateStudent = async (id: string, fullName: string): Promise<void> => {
+  const sanitizedFullName = sanitizeStudentName(fullName);
   const payload = {
-    fullName: fullName.trim(),
+    fullName: sanitizedFullName,
     updatedAt: nowIso(),
   };
 

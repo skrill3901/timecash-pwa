@@ -24,13 +24,15 @@ export const useStatisticsPage = () => {
 
   const summary = useMemo(() => {
     if (!settings) {
-      return { totalLessons: 0, totalHours: 0, totalAmount: 0 };
+      return { totalLessons: 0, totalHours: 0, totalAmount: 0, totalRent: 0, totalProfit: 0 };
     }
 
     return calculateStatistics({
       rows,
       hourlyRateSingle: settings.hourlyRateSingle,
       hourlyRatePair: settings.hourlyRatePair,
+      rentalRateSingle: settings.rentalRateSingle,
+      rentalRatePair: settings.rentalRatePair,
     });
   }, [rows, settings]);
 

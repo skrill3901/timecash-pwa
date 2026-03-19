@@ -23,6 +23,8 @@ export interface SettingsRecord {
   id: 'default';
   hourlyRateSingle: number;
   hourlyRatePair: number;
+  rentalRateSingle: number;
+  rentalRatePair: number;
   themeMode: 'system' | 'light' | 'dark';
   updatedAt: string;
 }
@@ -53,6 +55,35 @@ class TimecashDb extends Dexie {
       settings: 'id',
       syncQueue: 'id, entity, entityId, status, createdAt',
     });
+
+    this.version(2)
+      .stores({
+        students: 'id, fullName, isArchived, updatedAt',
+        lessons: 'id, date, updatedAt',
+        settings: 'id',
+        syncQueue: 'id, entity, entityId, status, createdAt',
+      })
+      .upgrade(async (transaction) => {
+        const settingsTable = transaction.table<SettingsRecord, 'id'>('settings');
+        const settings = await settingsTable.toCollection().first();
+
+        if (!settings) {
+          return;
+        }
+
+        await settingsTable.put({
+          ...settings,
+          hourlyRateSingle: Number.isFinite(settings.hourlyRateSingle)
+            ? settings.hourlyRateSingle
+            : 850,
+          hourlyRatePair: Number.isFinite(settings.hourlyRatePair) ? settings.hourlyRatePair : 1000,
+          rentalRateSingle: Number.isFinite(settings.rentalRateSingle)
+            ? settings.rentalRateSingle
+            : 100,
+          rentalRatePair: Number.isFinite(settings.rentalRatePair) ? settings.rentalRatePair : 200,
+          updatedAt: settings.updatedAt || new Date().toISOString(),
+        });
+      });
   }
 }
 

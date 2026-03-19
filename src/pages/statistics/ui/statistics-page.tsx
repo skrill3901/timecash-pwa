@@ -55,6 +55,8 @@ export const StatisticsPage = () => {
         totalLessons={summary.totalLessons}
         totalHours={summary.totalHours}
         totalAmount={summary.totalAmount}
+        totalRent={summary.totalRent}
+        totalProfit={summary.totalProfit}
       />
 
       <section className="space-y-2">

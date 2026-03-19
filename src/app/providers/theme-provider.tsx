@@ -46,14 +46,18 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       themeMode,
       setThemeMode: async (nextThemeMode) => {
         const currentSettings = settings ?? {
-          hourlyRateSingle: 1000,
-          hourlyRatePair: 1600,
+          hourlyRateSingle: 850,
+          hourlyRatePair: 1000,
+          rentalRateSingle: 100,
+          rentalRatePair: 200,
           themeMode: 'system' as ThemeMode,
         };
 
         await saveSettings({
           hourlyRateSingle: currentSettings.hourlyRateSingle,
           hourlyRatePair: currentSettings.hourlyRatePair,
+          rentalRateSingle: currentSettings.rentalRateSingle,
+          rentalRatePair: currentSettings.rentalRatePair,
           themeMode: nextThemeMode,
         });
       },

@@ -27,6 +27,8 @@ describe('lesson utils', () => {
     const result = calculateStatistics({
       hourlyRateSingle: 1000,
       hourlyRatePair: 1500,
+      rentalRateSingle: 100,
+      rentalRatePair: 200,
       rows: [
         {
           id: '1',
@@ -54,5 +56,7 @@ describe('lesson utils', () => {
     expect(result.totalLessons).toBe(2);
     expect(result.totalHours).toBe(2.5);
     expect(result.totalAmount).toBe(3250);
+    expect(result.totalRent).toBe(400);
+    expect(result.totalProfit).toBe(2850);
   });
 });
