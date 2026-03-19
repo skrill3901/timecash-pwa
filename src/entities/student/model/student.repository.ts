@@ -6,11 +6,11 @@ import { createId } from '@shared/lib/id';
 const nowIso = (): string => new Date().toISOString();
 
 const normalizeStudentName = (fullName: string): string => {
-  return fullName.trim().replaceAll(/\s+/g, ' ').toLocaleLowerCase('ru-RU');
+  return fullName.trim().replace(/\s+/g, ' ').toLocaleLowerCase('ru-RU');
 };
 
 const sanitizeStudentName = (fullName: string): string => {
-  return fullName.trim().replaceAll(/\s+/g, ' ');
+  return fullName.trim().replace(/\s+/g, ' ');
 };
 
 export const getActiveStudents = async (): Promise<StudentRecord[]> => {
