@@ -71,3 +71,15 @@ export default defineConfig([
   },
 ])
 ```
+
+## PWA
+
+Приложение настроено как PWA (vite-plugin-pwa): есть Service Worker с автообновлением, манифест и регистрация в `main.tsx`.
+
+**Иконки для установки на устройство:** положи в `public/` два файла:
+- `pwa-192x192.png` (192×192 px)
+- `pwa-512x512.png` (512×512 px)
+
+Либо сгенерируй их из одного изображения с помощью [@vite-pwa/assets-generator](https://vite-pwa-org.netlify.app/assets-generator/).
+
+Пакет `workbox-window` в devDependencies опционален — его можно удалить, если не нужен кастомный UI при обновлении (при `registerType: 'prompt'`).
